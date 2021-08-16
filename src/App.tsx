@@ -7,7 +7,7 @@ import ConnectButton from './components/ConnectButton';
 import AccountModal from './components/AccountModal';
 import { contractAddress } from './config/address';
 import Web3 from "web3";
-import { useEthers } from "@usedapp/core";
+import { useEthers } from "@usedapp/core/";
 
 declare const window: Window &
    typeof globalThis & {

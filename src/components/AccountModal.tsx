@@ -28,13 +28,6 @@ export default function AccountModal({isOpen, onClose}: Props) {
       onClose();
     }
 
-    /* function copyCodeToClipboard () {
-      const el = Text;
-      console.log(el);
-      // el.select<any |null>();
-      document.execCommand("copy");
-    } */
-
     return (
       <Modal isOpen={isOpen} onClose={onClose} isCentered size="md">
         <ModalOverlay />
