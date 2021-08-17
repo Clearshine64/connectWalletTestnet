@@ -5,7 +5,7 @@ import App from './App';
 import { DAppProvider, ChainId } from '@usedapp/core';
 
 const config = {
-  readOnlyChainId: ChainId.Rinkeby,
+  supportedChains: [ChainId.Rinkeby],
   readOnlyUrls: {
     [ChainId.Rinkeby]: `https://rinkeby.infura.io/v3/ae7e51244f7141848b377da95a776361`,
    },
