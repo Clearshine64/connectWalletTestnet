@@ -56,8 +56,8 @@ const ContractABI = require('./config/abi.json');
 function App() {
 
   const [walletOfOwner, setWalletOfOwner] = useState([]);
-  const defaultTokenURI = new Array();
-  const [tokenURI, setTokenURI] = useState(defaultTokenURI);
+  const defaultTokenURI :any = [];
+  const [tokenURI] = useState(defaultTokenURI);
   const [byAmount, setByAmount] = useState<any |null>(0);
  
   const { account } = useEthers();
@@ -102,7 +102,7 @@ function App() {
         ))
       });
     })
-  }, [walletOfOwner]);
+  });
   const handleChange = () => {
     if(byAmount > 20) {
       alert('max is 20');
