@@ -122,7 +122,7 @@ export default function AccountModal({isOpen, onClose}: Props) {
                   fontSize="sm"
                   display="flex"
                   alignItems="center"
-                  href={`https://ropsten.etherscan.io/address/${account}`}
+                  href={`https://rinkeby.etherscan.io/address/${account}`}
                   isExternal
                   color="gray.400"
                   ml={6}

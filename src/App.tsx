@@ -98,7 +98,8 @@ function App() {
                 let resJson = await response.json();
                 defaultTokenURI.push(resJson.image);
               } catch (err) {
-                console.log("json error: ", err)
+                console.log("json error: ", err);
+                defaultTokenURI.push('notoken');
               }
             }
           }
@@ -125,12 +126,24 @@ function App() {
         <ConnectButton handleOpenModal={onOpen} />
         <AccountModal isOpen={isOpen} onClose={onClose} />
         <div className="container-fluid">
-          <div className="row" style={{justifyContent: 'center'}}>
-          {tokenURI.map((value, index) => (
-            <div className="img col-md-2" key={index} style={{marginTop:'10px',display: 'flex',justifyContent: 'center'}}>
-              <img className="image" src={value} alt="img" height={120} width={120} style={{borderRadius:'8px'}}/>
-            </div>
-          ))}
+          <div className="row" style={{
+            justifyContent: tokenURI.length < 7 ? 'center' : ''
+            }}>
+          {tokenURI.map((value, index) => {
+            if(value !== 'notoken') {
+              return (
+                <div className="img col-md-2" key={index} style={{marginTop:'10px',display: 'flex',justifyContent: 'center'}}>
+                  <img className="image" src={value} alt="img" height={120} width={120} style={{borderRadius:'8px'}}/>
+                </div>
+              )
+            } else {
+              return (
+                <div className="img col-md-2" key={index} style={{marginTop:'10px',display: 'flex',justifyContent: 'center'}}>
+                  <div className="image" style={{height:'120px', width:'120px', borderRadius:'8px', backgroundColor:'wheat', textAlign:'center'}}><p style={{paddingTop:'50px', fontFamily:'cursive'}}>no image</p></div>
+                </div>
+              )
+            }
+          })}
           </div>
         </div>
         <Label>
