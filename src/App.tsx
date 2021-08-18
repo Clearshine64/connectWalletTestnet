@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components'
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
 import { ChakraProvider, useDisclosure } from '@chakra-ui/react'
 import Layout from './components/Layout';
 import ConnectButton from './components/ConnectButton';
@@ -8,6 +9,7 @@ import AccountModal from './components/AccountModal';
 import { contractAddress } from './config/address';
 import Web3 from "web3";
 import { useEthers} from "@usedapp/core/";
+import { Promise } from 'bluebird';
 
 declare const window: Window &
    typeof globalThis & {
@@ -38,41 +40,25 @@ const Button = styled.button`
 const Label = styled.div`
   margin: 5px;
 `
-const Table = styled.table`
-  border-collapse: collapse;
-  margin: 25px;
-  font-size: 1.0em;
-  font-family: sans-serif;
-  min-width: 400px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-  color: #009879;
-  font-family: cursive;
-  text-align: center;
-  word-break: break-word;
-`
+
 
 const ContractABI = require('./config/abi.json');
 
 function App() {
 
-  const [walletOfOwner, setWalletOfOwner] = useState([]);
-  const defaultTokenURI :any = [];
-  const [tokenURI] = useState(defaultTokenURI);
+  
+  const [tokenURI, setTokenURI] = useState([]);
   const [byAmount, setByAmount] = useState<any |null>(0);
  
   const { account } = useEthers();
   
-  const web3 = new Web3(
-    "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
-  );
-  
-  const BACContract = new web3.eth.Contract(ContractABI, contractAddress);
-  const getOwner = async () => {
-    const owner = await BACContract.methods.owner().call();
-    return owner
-  }
-  
+ 
+
   const getMint = async (byAmount:any) => {
+    const web3 = new Web3(
+      "https://rinkeby.infura.io/v3/9bbe3db4091e4df8a7a01d24c8724c60"
+    );
+    
     window.web3 = new Web3(window.ethereum);
     const BACContract = new window.web3.eth.Contract(
       ContractABI, contractAddress
@@ -85,24 +71,46 @@ function App() {
       await BACContract.methods.mint(byAmount).send({from: account, value: value});
     }
   }
-
-  const getEachTokenURI = async (tokenId: string) => {
-    const result = await BACContract.methods.tokenURI(Number(tokenId)).call();
-    return result
-  }
-
   useEffect(() => {
-    getOwner().then((owner) => {
-      BACContract.methods.walletOfOwner(owner).call().then((result: any) => {
-        account ? setWalletOfOwner(result) : setWalletOfOwner([]);
-        result.map((tokenId:string) => (
-          getEachTokenURI(tokenId).then((res) => {
-            defaultTokenURI.push(res);
-          })
-        ))
+    const web3 = new Web3(
+      "https://rinkeby.infura.io/v3/9bbe3db4091e4df8a7a01d24c8724c60"
+    );
+    const BACContract = new web3.eth.Contract(ContractABI, contractAddress);
+    let defaultTokenURI:any = [];
+    if(account) {
+      BACContract.methods.walletOfOwner(account).call().then((result: any) => {
+        Promise.map(result, async (tokenId:any) => {
+          let res = null;
+          try {
+            res = await BACContract.methods.tokenURI(Number(tokenId)).call();
+          } catch (err) {
+            console.log("web3 error:", err)
+          }
+          if(res) {
+            let response = null;
+            try {
+              response = await fetch(res);
+            } catch (err) {
+              console.log("fetch error: ", err)
+            }
+            if(response) {
+              try {
+                let resJson = await response.json();
+                defaultTokenURI.push(resJson.image);
+              } catch (err) {
+                console.log("json error: ", err)
+              }
+            }
+          }
+        }).then(() => {
+          setTokenURI(defaultTokenURI);
+        });
       });
-    })
-  });
+    } else {
+      setTokenURI([]);
+    }
+  },[account]);
+
   const handleChange = () => {
     if(byAmount > 20) {
       alert('max is 20');
@@ -116,24 +124,15 @@ function App() {
       <Layout>
         <ConnectButton handleOpenModal={onOpen} />
         <AccountModal isOpen={isOpen} onClose={onClose} />
-        <Table className="styled-table">
-          <thead>
-            <tr>
-              <th>WalletOfOwner</th>
-              <th>TokenURI</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              walletOfOwner.map((value, index) => (
-                <tr key={index}>
-                  <td>{value}</td>
-                  <td>{tokenURI[index]}</td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </Table>
+        <div className="container-fluid">
+          <div className="row" style={{justifyContent: 'center'}}>
+          {tokenURI.map((value, index) => (
+            <div className="img col-md-2" key={index} style={{marginTop:'10px',display: 'flex',justifyContent: 'center'}}>
+              <img className="image" src={value} alt="img" height={120} width={120} style={{borderRadius:'8px'}}/>
+            </div>
+          ))}
+          </div>
+        </div>
         <Label>
           <Input type="number" name="number" min="0" max="20" onChange={(e)=>setByAmount(e.target.value)} placeholder="num" value={byAmount}/>
           <Button onClick={handleChange}>MINT</Button>

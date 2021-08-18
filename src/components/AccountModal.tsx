@@ -96,7 +96,6 @@ export default function AccountModal({isOpen, onClose}: Props) {
                     const Text = text
                     return Text
                   }}
-                  // onClick={copyCodeToClipboard}
                 >
                   {account &&
                     `${account.slice(0, 6)}...${account.slice(
@@ -146,14 +145,6 @@ export default function AccountModal({isOpen, onClose}: Props) {
             borderBottomRightRadius="3xl"
             p={6}
           >
-            {/* <Text
-              color="white"
-              textAlign="left"
-              fontWeight="medium"
-              fontSize="md"
-            >
-              Your transactions willl appear here...
-            </Text> */}
           </ModalFooter>
         </ModalContent>
       </Modal>
