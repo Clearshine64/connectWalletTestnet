@@ -96,10 +96,10 @@ function App() {
             if(response) {
               try {
                 let resJson = await response.json();
-                defaultTokenURI.push(resJson.image);
+                defaultTokenURI.push(`${resJson.image}-${tokenId}`);
               } catch (err) {
                 console.log("json error: ", err);
-                defaultTokenURI.push('notoken');
+                defaultTokenURI.push(`notoken-${tokenId}`);
               }
             }
           }
@@ -130,16 +130,29 @@ function App() {
             justifyContent: tokenURI.length < 7 ? 'center' : ''
             }}>
           {tokenURI.map((value, index) => {
-            if(value !== 'notoken') {
+            let temp :string = '';
+            temp = value;
+            let tempArr = temp.split("-");
+            if(tempArr[0] !== 'notoken') {
               return (
-                <div className="img col-md-2" key={index} style={{marginTop:'10px',display: 'flex',justifyContent: 'center'}}>
-                  <img className="image" src={value} alt="img" height={120} width={120} style={{borderRadius:'8px'}}/>
+                <div className="col-md-2" key={index} style={{marginTop:'10px',display: 'flex',justifyContent: 'center', position:'relative'}}>
+                  <div className="img">
+                    <img className="image" src={tempArr[0]} alt="img" height={120} width={120} style={{borderRadius:'8px'}}/>
+                    <div className="middle">
+                      <div className="text">TokenId:{tempArr[1]}</div>
+                    </div>
+                  </div>
                 </div>
               )
             } else {
               return (
-                <div className="img col-md-2" key={index} style={{marginTop:'10px',display: 'flex',justifyContent: 'center'}}>
-                  <div className="image" style={{height:'120px', width:'120px', borderRadius:'8px', backgroundColor:'wheat', textAlign:'center'}}><p style={{paddingTop:'50px', fontFamily:'cursive'}}>no image</p></div>
+                <div className="col-md-2" key={index} style={{marginTop:'10px',display: 'flex',justifyContent: 'center'}}>
+                  <div className="img">
+                    <div className="image" style={{height:'120px', width:'120px', borderRadius:'8px', backgroundColor:'wheat', textAlign:'center'}}><p style={{paddingTop:'50px', fontFamily:'cursive'}}>no image</p></div>
+                    <div className="middle">
+                      <div className="text">TokenId:{tempArr[1]}</div>
+                    </div>
+                  </div>
                 </div>
               )
             }

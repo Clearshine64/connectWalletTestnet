@@ -114,6 +114,7 @@ export default function AccountModal({isOpen, onClose}: Props) {
                     textDecoration: "none",
                     color: "whiteAlpha.800",
                   }}
+                  onClick={() => {navigator.clipboard.writeText(`${account}`)}}
                 >
                   <CopyIcon mr={1} />
                   Copy Address
